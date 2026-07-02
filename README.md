@@ -40,10 +40,7 @@ A single-file, responsive landing page for **Crema Coffee House**, a tiny corner
 
 ## WhatsApp Integration
 
-All WhatsApp buttons link to:
-```
-https://wa.me/923182781890
-```
+All WhatsApp buttons link to the shop number (configured in HTML).
 
 ## Sections
 
