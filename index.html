@@ -3,820 +3,1518 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How to Train Your AI — A Zoo Keeper's Guide</title>
+<meta name="description" content="Crema Coffee House — A tiny corner coffee shop in the old town. Single-origin espresso, fresh-baked mornings. Order via WhatsApp.">
+<title>Crema — Coffee House</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --green-900:#1a3c2a;--green-700:#2d6a4f;--green-500:#40916c;--green-300:#74c69d;--green-100:#d8f3dc;--green-50:#edfaf0;
-    --gold:#f4a236;--gold-light:#fef3c7;--brown:#8b5e34;--cream:#fdfbf7;--gray-900:#1a1a2e;--gray-700:#3a3a50;--gray-500:#6b6b80;--gray-300:#c0c0cc;--white:#fff;
-    --shadow:0 4px 24px rgba(0,0,0,0.06);--shadow-lg:0 12px 48px rgba(0,0,0,0.1);--radius:16px;--radius-sm:10px;
-    --sidebar-w:280px;--header-h:64px;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --black: #1A1110;
+  --dark: #2C1F1A;
+  --brown-900: #3E2C1F;
+  --brown-800: #5C3D2E;
+  --brown-700: #7A5238;
+  --brown-600: #8B6B4A;
+  --gray-700: #5A4A3E;
+  --gray-600: #7A6A5E;
+  --gray-500: #9A8A7E;
+  --gray-400: #B8AA9E;
+  --gray-300: #D0C8BE;
+  --gray-200: #E4DED6;
+  --gray-100: #F0ECE6;
+  --gray-50: #F7F4F0;
+  --cream: #F5F0EA;
+  --cream-dark: #EBE3DA;
+  --white: #FFFCF8;
+  --caramel: #B48B5A;
+  --caramel-dark: #9A7548;
+  --caramel-light: #D4B896;
+  --caramel-glow: rgba(180, 139, 90, 0.1);
+  --star: #D4A84B;
+  --shadow-sm: 0 2px 8px rgba(26,17,16,0.04);
+  --shadow-md: 0 8px 32px rgba(26,17,16,0.06);
+  --shadow-lg: 0 20px 60px rgba(26,17,16,0.1);
+  --radius: 20px;
+  --radius-sm: 10px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--white);
+  color: var(--dark);
+  line-height: 1.75;
+  font-size: 1.0625rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  text-wrap: balance;
+}
+
+h2 { letter-spacing: -0.04em; }
+
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+::selection { background: var(--caramel); color: var(--white); }
+
+:focus-visible {
+  outline: 2px solid var(--caramel);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  padding: 12px 20px;
+  background: var(--caramel);
+  color: var(--white);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 10000;
+  transition: top 0.3s;
+  text-decoration: none;
+}
+.skip-link:focus { top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
-  html{scroll-behavior:smooth}
-  body{
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--cream);color:var(--gray-900);line-height:1.7;font-size:16px;
-    display:flex;min-height:100vh;
+  html { scroll-behavior: auto; }
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ---- Scroll Reveal ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+  will-change: transform, opacity;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+.reveal-d4 { transition-delay: 0.4s; }
+.reveal-d5 { transition-delay: 0.5s; }
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  will-change: transform, opacity;
+}
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  will-change: transform, opacity;
+}
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---- Navigation ---- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(62,44,31,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.8px;
+  position: relative;
+}
+.nav-logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: var(--caramel-light);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+}
+.nav-logo:hover::after { transform: scaleX(1); }
+
+.nav-links { display: flex; gap: 4px; align-items: center; }
+
+.nav-links a {
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+}
+
+.nav-links a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.06);
+  transform: scaleX(0.85) scaleY(0.6);
+  opacity: 0;
+  transition: all 0.3s var(--ease-out);
+}
+.nav-links a:hover::before,
+.nav-links a.active::before {
+  transform: scaleX(1) scaleY(1);
+  opacity: 1;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--white);
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 2px;
+  background: var(--caramel-light);
+  border-radius: 2px;
+}
+
+.nav-order {
+  background: var(--caramel) !important;
+  color: var(--white) !important;
+  padding: 10px 24px !important;
+  font-weight: 600 !important;
+}
+
+.nav-order:hover {
+  background: var(--caramel-dark) !important;
+  color: var(--white) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(180,139,90,0.3);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+.hamburger:hover { background: var(--gray-100); }
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: all 0.35s var(--ease-in-out);
+  transform-origin: center;
+}
+
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+.hamburger.active span:nth-child(2) { opacity: 0; transform: translateX(-8px); }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+/* ---- Hero ---- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(30,18,12,0.82) 0%, rgba(50,30,20,0.7) 50%, rgba(30,18,12,0.85) 100%),
+    url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(200,166,122,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: -5%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,254,251,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero .container {
+  text-align: center;
+  padding: 140px 32px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content { max-width: 640px; margin: 0 auto; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 28px;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.5px;
+}
+
+.hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: #A8E6A1; display: inline-block; animation: pulse-dot 2s ease-in-out infinite; }
+
+.hero h1 {
+  font-size: clamp(3.5rem, 7vw, 5.5rem);
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.15);
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--caramel-light);
+  display: inline-block;
+  position: relative;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.hero h1 em::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--caramel-light);
+  opacity: 0.25;
+  border-radius: 2px;
+}
+
+.hero-tagline {
+  font-size: clamp(1.1rem, 1.8vw, 1.25rem);
+  color: rgba(255,255,255,0.7);
+  margin: 0 auto 36px;
+  line-height: 1.85;
+  max-width: 540px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 34px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  font-family: 'Inter', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: all 0.35s var(--ease-out);
+  will-change: transform;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary {
+  background: var(--black);
+  color: var(--white);
+  box-shadow: 0 4px 16px rgba(26,26,26,0.15);
+}
+.btn-primary:hover {
+  background: var(--dark);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(26,26,26,0.2);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--dark);
+  border: 1.5px solid var(--gray-300);
+}
+.btn-outline:hover {
+  border-color: var(--caramel);
+  color: var(--caramel);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px var(--caramel-glow);
+}
+
+.btn-outline-light {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.25);
+}
+.btn-outline-light:hover {
+  border-color: var(--caramel-light);
+  color: var(--white);
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-3px);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 36px;
+  margin-top: 44px;
+  padding-top: 36px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.6);
+}
+.hero-stat-item strong { color: var(--white); font-weight: 700; }
+.hero-stat-item .star { color: var(--star); }
+
+/* ---- Ticker ---- */
+.ticker {
+  background: var(--cream-dark);
+  padding: 14px 0;
+  overflow: hidden;
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.ticker-track {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: tickerScroll 40s linear infinite;
+  will-change: transform;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  padding: 0 36px;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+}
+
+.ticker-item .sep { color: var(--caramel); font-size: 0.4rem; }
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ---- Section Common ---- */
+.section { padding: 140px 0; position: relative; }
+.section-header { margin-bottom: 56px; }
+.section-header.center { text-align: center; }
+.section-title {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  color: var(--black);
+  margin-bottom: 16px;
+  letter-spacing: -0.04em;
+}
+.section-subtitle {
+  font-size: 1.125rem;
+  color: var(--gray-600);
+  max-width: 600px;
+  line-height: 1.85;
+}
+.section-header.center .section-subtitle { margin: 0 auto; }
+.section.alt { background: var(--cream); position: relative; }
+.section.alt2 { background: var(--cream-dark); }
+.section.alt3 { background: var(--white); }
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--gray-400);
+  margin-bottom: 12px;
+}
+.section-label span { color: var(--caramel); }
+
+/* ---- Story ---- */
+.story-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+.story-content { position: relative; }
+.story-content::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, var(--caramel-glow) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 50%;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--gray-400);
+  margin-bottom: 12px;
+}
+
+.section-label span { color: var(--caramel); }
+
+.story-wrap h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  color: var(--black);
+  margin-bottom: 24px;
+  letter-spacing: -0.04em;
+  position: relative;
+}
+.story-wrap h2::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 2px;
+  background: var(--caramel-light);
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+
+.story-wrap p {
+  font-size: 1.0625rem;
+  color: var(--gray-600);
+  line-height: 1.95;
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+
+.story-signoff {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  color: var(--gray-500);
+  font-size: 1rem;
+  margin-top: 28px;
+  position: relative;
+  padding-left: 24px;
+}
+.story-signoff::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--caramel);
+}
+
+.story-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.story-images figure {
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  box-shadow: var(--shadow-sm);
+}
+
+.story-images figure:first-child {
+  margin-top: 50px;
+}
+
+.story-images figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.story-images figure:hover img { transform: scale(1.06); }
+
+/* ---- Menu ---- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  transition: all 0.4s var(--ease-out);
+  will-change: transform;
+  position: relative;
+}
+.menu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--caramel-light), var(--caramel), var(--caramel-light));
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+  z-index: 1;
+}
+.menu-card:hover::before { opacity: 1; }
+
+.menu-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+  border-color: transparent;
+}
+
+.menu-card-fig {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.menu-card-fig img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.menu-card:hover .menu-card-fig img { transform: scale(1.1); }
+
+.menu-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.menu-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--caramel-dark);
+  margin-bottom: 6px;
+  background: var(--caramel-glow);
+  padding: 2px 10px;
+  border-radius: 50px;
+  width: fit-content;
+}
+
+.menu-card h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.menu-card p {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.menu-card .price {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: var(--caramel-dark);
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* ---- Gallery ---- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease-out), filter 0.5s var(--ease-out);
+}
+
+.gallery-grid figure {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  cursor: pointer;
+}
+
+.gallery-grid figure::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  transition: background 0.4s var(--ease-out);
+  pointer-events: none;
+}
+
+.gallery-grid figure:hover::after {
+  background: rgba(180,139,90,0.08);
+}
+
+.gallery-grid figure:hover img { transform: scale(1.08); filter: saturate(1.05); }
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.gallery-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease-out);
+}
+
+.gallery-grid figure:hover img { transform: scale(1.06); }
+
+.gallery-label {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--gray-400);
+  margin-top: 28px;
+  letter-spacing: 1.5px;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* ---- Quote ---- */
+.quote-section {
+  padding: 120px 0;
+  text-align: center;
+  position: relative;
+  background:
+    linear-gradient(rgba(35,18,10,0.6), rgba(50,25,12,0.65)),
+    url('https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+.quote-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: var(--caramel-light);
+  border-radius: 2px;
+}
+
+.quote-section blockquote {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.quote-section .quote-icon {
+  font-size: 4rem;
+  line-height: 0.4;
+  color: var(--caramel-light);
+  font-family: 'Georgia', serif;
+  margin-bottom: 20px;
+  display: block;
+  opacity: 0.5;
+}
+
+.quote-section blockquote p {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-style: italic;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+.quote-section .stars {
+  color: var(--star);
+  font-size: 1.2rem;
+  letter-spacing: 5px;
+  margin-top: 24px;
+}
+
+.quote-section .attribution {
+  font-size: 0.875rem;
+  color: var(--gray-400);
+  margin-top: 14px;
+}
+
+/* ---- Visit ---- */
+.visit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.visit-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 40px 32px;
+  border: 1px solid var(--gray-200);
+  text-align: center;
+  transition: all 0.4s var(--ease-out);
+  will-change: transform;
+  position: relative;
+}
+.visit-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: var(--caramel-light);
+  border-radius: 0 0 3px 3px;
+  transition: width 0.4s var(--ease-out);
+}
+.visit-card:hover::before { width: 60px; }
+
+.visit-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+  border-color: var(--caramel-light);
+}
+
+.visit-card .icon {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.visit-card h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+}
+
+.visit-card .value {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.3;
+}
+
+.visit-card .value a { color: var(--caramel-dark); position: relative; }
+.visit-card .value a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--caramel);
+  transition: width 0.3s var(--ease-out);
+}
+.visit-card .value a:hover::after { width: 100%; }
+
+.visit-card .sub {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  margin-top: 6px;
+}
+
+/* ---- Contact CTA ---- */
+.cta-section {
+  padding: 120px 0;
+  text-align: center;
+  background: linear-gradient(135deg, var(--black) 0%, var(--dark) 60%, var(--brown-900) 100%);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(180,139,90,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(180,139,90,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-section h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--white);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-section p {
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 32px;
+  font-size: 1.0625rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-section .btn {
+  position: relative;
+  z-index: 1;
+  padding: 18px 48px;
+  font-size: 1rem;
+}
+.cta-section .btn-primary {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.cta-section .btn-primary:hover {
+  background: var(--gray-100);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* ---- Footer ---- */
+.footer {
+  padding: 64px 0 40px;
+  background: var(--brown-900);
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1.5px;
+  background: var(--caramel-dark);
+  border-radius: 2px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-brand h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.footer-brand .subtitle {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.3px;
+}
+
+.footer-links { display: flex; gap: 28px; align-items: center; }
+.footer-links a { font-size: 0.875rem; color: rgba(255,255,255,0.55); transition: color 0.3s var(--ease-out); position: relative; }
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--caramel-light);
+  transition: width 0.3s var(--ease-out);
+}
+.footer-links a:hover { color: var(--caramel-light); }
+.footer-links a:hover::after { width: 100%; }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .gallery-grid figure:first-child { grid-column: span 2; grid-row: span 2; }
+}
+
+@media (max-width: 900px) {
+  .hero .container {
+    padding: 80px 28px 64px;
+    text-align: center;
+  }
+  .hero-content { margin: 0 auto; max-width: 560px; }
+  .hero-tagline { margin: 0 auto 36px; }
+  .hero-actions { justify-content: center; }
+  .hero-stats { justify-content: center; flex-wrap: wrap; gap: 24px; }
+
+  .story-wrap { grid-template-columns: 1fr; gap: 52px; }
+  .story-images figure:first-child { margin-top: 0; }
+
+  .visit-grid { grid-template-columns: 1fr; gap: 20px; max-width: 440px; margin: 0 auto; }
+
+  .section { padding: 100px 0; }
+  .section-header { margin-bottom: 40px; }
+}
+
+@media (max-width: 768px) {
+  .top-bar { display: none; }
+
+  .navbar .container { height: 64px; }
+
+  .nav-links {
+    position: fixed;
+    top: 64px;
+    left: 20px;
+    right: 20px;
+    background: rgba(62,44,31,0.98);
+    flex-direction: column;
+    padding: 16px;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.4s var(--ease-out);
+    pointer-events: none;
+    z-index: 999;
   }
 
-  /* ─── SIDEBAR ─── */
-  .sidebar{
-    position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--green-900);color:var(--white);z-index:100;
-    display:flex;flex-direction:column;overflow:hidden;transition:transform .3s;
-  }
-  .sidebar-header{
-    padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;
-  }
-  .sidebar-header h2{font-family:'Playfair Display',serif;font-size:1.05rem;line-height:1.3;color:var(--gold);}
-  .sidebar-header p{font-size:0.7rem;opacity:0.5;text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
-  .sidebar-nav{flex:1;overflow-y:auto;padding:8px 0;}
-  .sidebar-nav a{
-    display:flex;align-items:center;gap:10px;padding:11px 20px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.88rem;font-weight:500;
-    transition:all .15s;border-left:3px solid transparent;cursor:pointer;
-  }
-  .sidebar-nav a:hover{background:rgba(255,255,255,0.06);color:var(--white);}
-  .sidebar-nav a.active{background:rgba(255,255,255,0.1);color:var(--gold);border-left-color:var(--gold);font-weight:600;}
-  .sidebar-nav a .icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0;}
-  .sidebar-nav .divider{
-    height:1px;background:rgba(255,255,255,0.06);margin:8px 20px;
-  }
-  .sidebar-nav .section-label{
-    font-size:0.65rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.25);padding:16px 20px 6px;font-weight:600;
-  }
+  .nav-links.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
 
-  /* ─── SIDEBAR TOGGLE ─── */
-  .sidebar-toggle{
-    display:none;position:fixed;top:12px;left:12px;z-index:200;
-    background:var(--green-700);color:var(--white);border:none;width:40px;height:40px;border-radius:10px;
-    font-size:1.2rem;cursor:pointer;box-shadow:var(--shadow-lg);
-  }
-  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;}
+  .nav-links a { width: 100%; text-align: center; padding: 16px; font-size: 1rem; border-radius: var(--radius-sm); }
+  .nav-links a::before { display: none; }
+  .nav-links a:hover,
+  .nav-links a.active { background: rgba(255,255,255,0.1); color: var(--white); }
+  .nav-order { text-align: center !important; }
 
-  /* ─── MAIN ─── */
-  .main{
-    margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column;transition:margin-left .3s;
-  }
-  .main-header{
-    position:sticky;top:0;z-index:50;background:rgba(253,251,247,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    border-bottom:1px solid rgba(0,0,0,0.05);padding:0 32px;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;
-  }
-  .main-header .breadcrumb{font-size:0.8rem;color:var(--gray-500);}
-  .main-header .breadcrumb span{color:var(--gray-900);font-weight:600;}
-  .main-header .progress{font-size:0.78rem;color:var(--gray-500);background:var(--green-100);padding:4px 14px;border-radius:50px;font-weight:500;}
+  .hamburger { display: flex; }
 
-  .content{
-    flex:1;padding:40px 48px 32px;max-width:840px;margin:0 auto;width:100%;
-  }
+  .hero { min-height: auto; }
+  .hero .container { padding: 56px 20px; }
+  .hero h1 { font-size: 2.6rem; }
+  .hero-stats { margin-top: 32px; padding-top: 28px; }
+  .section { padding: 80px 0; }
+  .section-header { margin-bottom: 36px; }
 
-  /* ─── FOOTER NAV ─── */
-  .nav-buttons{
-    display:flex;justify-content:space-between;gap:16px;padding:32px 0 16px;border-top:1px solid var(--green-100);margin-top:32px;
-  }
-  .nav-btn{
-    display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:50px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;text-decoration:none;
-  }
-  .nav-btn.prev{background:var(--white);color:var(--gray-700);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.06);}
-  .nav-btn.prev:hover{background:var(--green-50);border-color:var(--green-300);}
-  .nav-btn.next{background:var(--green-700);color:var(--white);box-shadow:0 4px 16px rgba(45,106,79,0.3);}
-  .nav-btn.next:hover{background:var(--green-900);transform:translateY(-1px);}
-  .nav-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important;}
-  .nav-btn .arrow{font-size:1.1rem;}
+  .menu-grid { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; gap: 24px; }
 
-  /* ─── CONTENT STYLES (same as before, scoped) ─── */
-  .page h2{
-    font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:800;color:var(--green-900);margin-bottom:8px;
-  }
-  .page .ch-tag{
-    display:inline-block;background:var(--green-500);color:var(--white);font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-    padding:4px 14px;border-radius:50px;margin-bottom:12px;
-  }
-  .page h3{font-size:1.2rem;font-weight:700;color:var(--green-700);margin:28px 0 10px;}
-  .page h4{font-size:1.02rem;font-weight:600;color:var(--gray-700);margin:20px 0 8px;}
-  .page p{margin-bottom:14px;}
-  .page ul,.page ol{margin:10px 0 14px 22px;}
-  .page li{margin-bottom:5px;}
-  .page strong{color:var(--gray-900);}
-  .page .card{background:var(--white);border-radius:var(--radius);padding:24px 28px;margin:16px 0;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,0.04);}
-  .page .card-green{background:var(--green-50);border-left:4px solid var(--green-500);}
-  .page .card-gold{background:var(--gold-light);border-left:4px solid var(--gold);}
-  .page .table-wrap{overflow-x:auto;margin:16px 0;border-radius:var(--radius-sm);box-shadow:var(--shadow);}
-  .page table{width:100%;border-collapse:collapse;background:var(--white);font-size:0.9rem;}
-  .page thead{background:var(--green-700);color:var(--white);}
-  .page th{padding:12px 16px;text-align:left;font-weight:600;font-size:0.78rem;text-transform:uppercase;letter-spacing:.5px;}
-  .page td{padding:10px 14px;border-bottom:1px solid var(--green-100);}
-  .page tbody tr:hover{background:var(--green-50);}
-  .page .tree{background:var(--green-900);color:var(--green-100);border-radius:var(--radius);padding:20px 24px;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.7;margin:16px 0;overflow-x:auto;white-space:pre;}
-  .page pre{background:var(--gray-900);color:#e4e4ec;border-radius:var(--radius-sm);padding:16px 20px;overflow-x:auto;font-size:0.85rem;line-height:1.6;margin:14px 0;font-family:'Courier New',monospace;}
-  .page code{background:var(--green-100);color:var(--green-900);padding:2px 8px;border-radius:4px;font-size:0.85em;font-family:'Courier New',monospace;}
-  .page .mistake-callout{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:18px 22px;margin:16px 0;}
-  .page .mistake-callout .quote{font-style:italic;color:var(--gray-700);padding-left:14px;border-left:3px solid #f87171;margin-bottom:6px;}
-  .page .mistake-callout .correction{color:#dc2626;font-weight:600;}
-  .page .inline-q{background:var(--gold-light);border-radius:var(--radius-sm);padding:14px 18px;margin:10px 0;}
-  .page .inline-q .answer{color:var(--green-700);font-weight:600;}
-  .page .mistake-list{counter-reset:mistake;}
-  .page .mistake-item{background:var(--white);border-radius:var(--radius-sm);padding:18px 22px;margin:10px 0;box-shadow:var(--shadow);border-left:4px solid var(--gold);counter-increment:mistake;}
-  .page .mistake-item h4{margin:0 0 6px;font-size:0.98rem;}
-  .page .mistake-item h4::before{content:"#" counter(mistake) " ";color:var(--gold);font-weight:800;}
-  .page .mistake-item .truth{color:var(--green-700);font-weight:600;}
-  .page blockquote{background:var(--green-50);border-left:4px solid var(--green-500);padding:14px 20px;margin:14px 0;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:0.93rem;color:var(--gray-700);}
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .gallery-grid figure:first-child { grid-column: span 2; grid-row: span 1; }
 
-  /* ─── FLASHCARDS ─── */
-  .flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:16px 0;}
-  .flashcard{background:var(--white);border-radius:var(--radius-sm);box-shadow:var(--shadow);cursor:pointer;transition:transform .2s,box-shadow .2s;perspective:800px;height:170px;}
-  .flashcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
-  .flashcard-inner{position:relative;width:100%;height:100%;transition:transform .5s ease;transform-style:preserve-3d;}
-  .flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
-  .flashcard-front,.flashcard-back{position:absolute;inset:0;border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;backface-visibility:hidden;border:1px solid rgba(0,0,0,0.04);}
-  .flashcard-front{background:var(--green-700);color:var(--white);}
-  .flashcard-front strong{font-size:1rem;display:block;margin-bottom:6px;}
-  .flashcard-front .tap-hint{font-size:0.65rem;opacity:0.5;text-transform:uppercase;letter-spacing:1px;}
-  .flashcard-back{background:var(--white);color:var(--gray-900);transform:rotateY(180deg);font-size:0.88rem;line-height:1.5;}
+  .quote-section { padding: 64px 0; }
+  .quote-section::before { width: 40px; }
 
-  /* ─── QUIZ ─── */
-  .quiz-item{background:var(--white);border-radius:var(--radius-sm);padding:20px 24px;margin:14px 0;box-shadow:var(--shadow);}
-  .quiz-item h4{margin:0 0 10px;font-size:1rem;}
-  .quiz-item .options{margin:6px 0 10px;}
-  .quiz-item .options div{padding:3px 0;font-size:0.92rem;}
-  .quiz-item .options{margin:6px 0 10px;}
-  .quiz-item .option-row{
-    display:flex;align-items:center;gap:10px;padding:10px 14px;margin:6px 0;border-radius:var(--radius-sm);
-    border:2px solid var(--green-100);cursor:pointer;transition:all .15s;user-select:none;
-  }
-  .quiz-item .option-row:hover{border-color:var(--green-300);background:var(--green-50);}
-  .quiz-item .option-row.selected{border-color:var(--green-500);background:var(--green-100);}
-  .quiz-item .option-row.correct{border-color:#10b981;background:#d1fae5;}
-  .quiz-item .option-row.wrong{border-color:#ef4444;background:#fef2f2;}
-  .quiz-item .option-row .box{
-    width:22px;height:22px;border-radius:50%;border:2px solid var(--green-300);display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;transition:all .15s;font-size:0.7rem;font-weight:700;color:transparent;
-  }
-  .quiz-item .option-row.selected .box{border-color:var(--green-500);background:var(--green-500);color:var(--white);}
-  .quiz-item .option-row.correct .box{border-color:#10b981;background:#10b981;color:var(--white);}
-  .quiz-item .option-row.wrong .box{border-color:#ef4444;background:#ef4444;color:var(--white);}
-  .quiz-item .option-row .letter{font-weight:600;color:var(--gray-700);}
-  .quiz-item .option-row .text{font-size:0.92rem;}
-  .quiz-feedback{margin-top:10px;padding:12px 16px;border-radius:var(--radius-sm);font-size:0.9rem;display:none;}
-  .quiz-feedback.show{display:block;}
-  .quiz-feedback.correct{background:#d1fae5;border-left:3px solid #10b981;}
-  .quiz-feedback.wrong{background:#fef2f2;border-left:3px solid #ef4444;}
-  .quiz-check-btn{background:var(--green-500);color:var(--white);border:none;padding:8px 24px;border-radius:50px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px;}
-  .quiz-check-btn:hover{background:var(--green-700);}
-  .quiz-check-btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .cta-section { padding: 80px 0; }
 
-  /* ─── STUDY PLAN ─── */
-  .study-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin:16px 0;}
-  .study-day{background:var(--white);border-radius:var(--radius-sm);padding:18px 22px;box-shadow:var(--shadow);border-top:4px solid var(--green-500);}
-  .study-day .day-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--green-500);}
-  .study-day h4{margin:3px 0 6px;font-size:1.05rem;color:var(--green-900);}
-  .study-day .time{display:inline-block;background:var(--green-100);color:var(--green-700);font-size:0.72rem;font-weight:600;padding:2px 10px;border-radius:50px;margin-bottom:6px;}
-  .study-day p{font-size:0.88rem;margin:3px 0;}
-  .study-day .checkpoint{margin-top:8px;padding:8px 12px;background:var(--gold-light);border-radius:8px;font-size:0.83rem;border-left:3px solid var(--gold);}
-  .study-day .checkpoint strong{color:var(--brown);}
-  .page .bonus{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fcd34d;border-radius:var(--radius-sm);padding:18px 22px;margin:16px 0;text-align:center;}
-  .page .bonus h4{color:#92400e;margin-top:0;}
+  .footer-content { flex-direction: column; align-items: center; text-align: center; }
+  .footer-bottom { flex-direction: column; text-align: center; }
 
-  /* ─── HOMEPAGE ─── */
-  .homepage{text-align:center;padding:40px 0 20px;}
-  .homepage .hero-mini{
-    background:linear-gradient(135deg,var(--green-900),var(--green-700));color:var(--white);border-radius:var(--radius);
-    padding:60px 40px 48px;margin-bottom:32px;position:relative;overflow:hidden;
-  }
-  .homepage .hero-mini::before{
-    content:'';position:absolute;inset:0;
-    background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:0.3;
-  }
-  .homepage .hero-mini *{position:relative;z-index:1;}
-  .homepage .hero-mini .badge{display:inline-block;background:var(--gold);color:var(--green-900);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:5px 14px;border-radius:50px;margin-bottom:16px;}
-  .homepage .hero-mini h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.2;margin-bottom:12px;}
-  .homepage .hero-mini h1 span{color:var(--gold);}
-  .homepage .hero-mini p{font-size:1rem;opacity:0.85;max-width:520px;margin:0 auto 24px;font-weight:300;}
-  .homepage .start-btn{
-    display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--green-900);padding:14px 36px;border-radius:50px;
-    font-size:1rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(244,162,54,0.35);
-  }
-  .homepage .start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(244,162,54,0.45);}
-  .homepage .stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;}
-  .homepage .stat-card{background:var(--white);border-radius:var(--radius);padding:20px 28px;box-shadow:var(--shadow);flex:1;min-width:120px;max-width:180px;}
-  .homepage .stat-card .num{font-size:1.8rem;font-weight:800;color:var(--green-700);}
-  .homepage .stat-card .label{font-size:0.78rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
-  .homepage .what-youll-learn{text-align:left;max-width:560px;margin:0 auto;}
-  .homepage .what-youll-learn h3{text-align:center;margin-bottom:16px;}
-  .homepage .what-youll-learn li{padding:6px 0;font-size:0.95rem;}
+  .visit-grid { max-width: 400px; }
+}
 
-  /* ─── RESPONSIVE ─── */
-  @media(max-width:820px){
-    .sidebar{transform:translateX(-100%);}
-    .sidebar.open{transform:translateX(0);}
-    .sidebar-overlay.show{display:block;}
-    .sidebar-toggle{display:flex;align-items:center;justify-content:center;}
-    .main{margin-left:0;}
-    .content{padding:24px 20px 32px;}
-    .main-header{padding:0 16px 0 60px;}
-    .nav-buttons{flex-direction:column;gap:10px;}
-    .nav-btn{justify-content:center;}
-  }
-  @media(max-width:480px){
-    .homepage .hero-mini{padding:36px 20px 32px;}
-    .homepage .stats{gap:12px;}
-    .homepage .stat-card{padding:14px 20px;min-width:80px;}
-    .flashcard-grid{grid-template-columns:1fr;}
-    .study-grid{grid-template-columns:1fr;}
-  }
+@media (max-width: 560px) {
+  .container { padding: 0 20px; }
+  .hero .container { padding: 40px 16px; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; }
+  .hero-stats { flex-direction: column; gap: 14px; align-items: center; }
+  .section { padding: 64px 0; }
+  .section-header { margin-bottom: 28px; }
+  .section-title { font-size: 1.8rem; }
+  .story-wrap { gap: 40px; }
+  .story-wrap h2 { font-size: 1.6rem; }
+  .menu-card-fig { aspect-ratio: 16 / 9; }
+  .menu-card-body { padding: 20px; }
+  .menu-card h3 { font-size: 1.1rem; }
+  .menu-grid { gap: 20px; }
 
-  /* ─── SCROLLBAR ─── */
-  .sidebar-nav::-webkit-scrollbar{width:4px;}
-  .sidebar-nav::-webkit-scrollbar-track{background:transparent;}
-  .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:4px;}
+  .cta-section .btn { width: 100%; max-width: 340px; justify-content: center; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .visit-grid { max-width: 100%; }
+  .visit-card { padding: 32px 24px; }
+
+  .quote-section blockquote p { font-size: 1.2rem; }
+}
+
+@media (max-width: 400px) {
+  .hero h1 { font-size: 1.8rem; }
+  .hero-tagline { font-size: 0.95rem; }
+  .hero .container { padding: 32px 12px 40px; }
+}
+
+@media (min-width: 769px) {
+  .nav-links { display: flex !important; opacity: 1 !important; transform: none !important; position: static !important; background: none !important; border: none !important; padding: 0 !important; box-shadow: none !important; pointer-events: auto !important; }
+}
 </style>
 </head>
 <body>
+<a href="#home" class="skip-link">Skip to content</a>
 
-<!-- ═══ SIDEBAR TOGGLE (mobile) ═══ -->
-<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">☰</button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<!-- NAV -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a href="#home" class="nav-logo">Crema</a>
 
-<!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <h2>How to Train Your AI</h2>
-    <p>A Zoo Keeper's Guide</p>
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" role="menubar" id="nav-links">
+      <li role="none"><a href="#story" role="menuitem">Our story</a></li>
+      <li role="none"><a href="#menu" role="menuitem">Menu</a></li>
+      <li role="none"><a href="#visit" role="menuitem">Visit</a></li>
+      <li role="none"><a href="https://wa.me/923182781890" role="menuitem" class="nav-order" target="_blank" rel="noopener">Order on WhatsApp</a></li>
+    </ul>
   </div>
-  <nav class="sidebar-nav" id="sidebarNav">
-    <div class="section-label">Home</div>
-    <a data-page="home" class="active"><span class="icon">🏠</span> Home</a>
-    <div class="divider"></div>
-    <div class="section-label">Chapters</div>
-    <a data-page="ch1"><span class="icon">🐾</span> Welcome to the Zoo</a>
-    <a data-page="ch2"><span class="icon">🤖</span> What is AI?</a>
-    <a data-page="ch3"><span class="icon">📊</span> What is ML?</a>
-    <a data-page="ch4"><span class="icon">🐙</span> What is Deep Learning?</a>
-    <a data-page="ch5"><span class="icon">🌳</span> Family Tree</a>
-    <a data-page="ch6"><span class="icon">⚠️</span> Common Mistakes</a>
-    <div class="divider"></div>
-    <div class="section-label">Study Tools</div>
-    <a data-page="ref"><span class="icon">📋</span> Quick Reference</a>
-    <a data-page="flashcards"><span class="icon">🃏</span> Flashcards</a>
-    <a data-page="quiz"><span class="icon">🧠</span> Chapter Quiz</a>
-    <a data-page="study"><span class="icon">📅</span> Study Plan</a>
-    <a data-page="takeaways"><span class="icon">🎯</span> Key Takeaways</a>
-  </nav>
-</aside>
+</nav>
 
-<!-- ═══ MAIN ═══ -->
-<div class="main">
-  <header class="main-header">
-    <div class="breadcrumb" id="breadcrumb">🏠 <span>Home</span></div>
-    <div class="progress" id="progress">0 / 12</div>
-  </header>
-  <div class="content" id="content">
-    <!-- rendered by JS -->
+<!-- HERO -->
+<section id="home" class="hero" aria-label="Welcome to Crema Coffee House — a cosy cafe interior with warm lighting">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge reveal visible">
+        <span class="dot"></span> Open today · 7am – 8pm
+      </div>
+
+      <h1 class="reveal visible reveal-d1">Slow coffee, <br><em>made by hand.</em></h1>
+
+      <p class="hero-tagline reveal visible reveal-d2">
+        A tiny corner coffee shop in the old town. Single-origin espresso, fresh-baked mornings, and a seat that's hard to leave.
+      </p>
+
+      <div class="hero-actions reveal visible reveal-d3">
+        <a href="#menu" class="btn btn-primary" style="background:var(--white);color:var(--brown-900);">View the menu</a>
+        <a href="https://wa.me/923182781890" class="btn btn-outline-light" target="_blank" rel="noopener">Order on WhatsApp</a>
+      </div>
+
+      <div class="hero-stats reveal visible reveal-d4">
+        <span class="hero-stat-item"><span class="star">★</span> <strong>4.9</strong> · 320+ reviews</span>
+        <span class="hero-stat-item">Old Town Square, Lane 4</span>
+        <span class="hero-stat-item"><strong>Free</strong> refills on filter</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">Single-origin espresso <span class="sep">✦</span></span>
+    <span class="ticker-item">House-roasted weekly <span class="sep">✦</span></span>
+    <span class="ticker-item">Fresh pastries daily <span class="sep">✦</span></span>
+    <span class="ticker-item">Oat & almond milk <span class="sep">✦</span></span>
+    <span class="ticker-item">Cosy corners <span class="sep">✦</span></span>
+    <span class="ticker-item">Free WiFi <span class="sep">✦</span></span>
+    <span class="ticker-item">Single-origin espresso <span class="sep">✦</span></span>
+    <span class="ticker-item">House-roasted weekly <span class="sep">✦</span></span>
+    <span class="ticker-item">Fresh pastries daily <span class="sep">✦</span></span>
+    <span class="ticker-item">Oat & almond milk <span class="sep">✦</span></span>
+    <span class="ticker-item">Cosy corners <span class="sep">✦</span></span>
+    <span class="ticker-item">Free WiFi <span class="sep">✦</span></span>
   </div>
 </div>
 
+<!-- STORY -->
+<section id="story" class="section" aria-label="Our story">
+  <div class="container">
+    <div class="story-wrap">
+      <div class="story-images">
+        <figure class="reveal-left reveal-d2">
+          <img src="https://images.unsplash.com/photo-1453614512568-c4024d13c247?auto=format&fit=crop&w=600&q=80" alt="Warm-toned coffee shop interior with wooden furniture and soft lighting" loading="lazy">
+        </figure>
+        <figure class="reveal-right reveal-d3">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" alt="Barista carefully pouring latte art into a ceramic cup" loading="lazy">
+        </figure>
+      </div>
+
+      <div class="story-content">
+        <div class="section-label reveal"><span>est. 2019</span> · Old Town</div>
+        <h2 class="reveal reveal-d1">A small room, a slow ritual</h2>
+        <p class="reveal reveal-d2">Crema started with one second-hand espresso machine and a stubborn idea: that a cup made with care is worth waiting for. We roast in-house every Tuesday, pull each shot by hand, and bake the morning's pastries before the sun is properly up.</p>
+        <p class="reveal reveal-d3">No rush, no syrupy shortcuts. Just good beans, real milk, and a corner of the old town that feels like yours.</p>
+        <p class="story-signoff reveal reveal-d4">Mara & Idris, founders</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu" class="section alt" aria-label="Menu">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label reveal">The counter</div>
+      <h2 class="section-title reveal reveal-d1">A short menu, done properly</h2>
+      <p class="section-subtitle reveal reveal-d2">We keep it small so everything's fresh. Beans roasted in-house every Tuesday.</p>
+    </div>
+
+    <div class="menu-grid">
+      <article class="menu-card reveal reveal-d1">
+        <figure class="menu-card-fig">
+          <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=300&q=80" alt="Small glass cortado on a wooden counter with coffee beans scattered nearby" loading="lazy">
+        </figure>
+        <div class="menu-card-body">
+          <span class="menu-card-badge">★ House favourite</span>
+          <h3>Honey Cortado</h3>
+          <p>Double ristretto, warm milk, a thread of wildflower honey.</p>
+          <span class="price">Rs 420</span>
+        </div>
+      </article>
+
+      <article class="menu-card reveal reveal-d2">
+        <figure class="menu-card-fig">
+          <img src="https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?auto=format&fit=crop&w=300&q=80" alt="Pour-over filter coffee being brewed into a glass carafe" loading="lazy">
+        </figure>
+        <div class="menu-card-body">
+          <h3>Filter of the Day</h3>
+          <p>A rotating single origin, brewed on the V60. Ask what's on.</p>
+          <span class="price">Rs 380</span>
+        </div>
+      </article>
+
+      <article class="menu-card reveal reveal-d3">
+        <figure class="menu-card-fig">
+          <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=300&q=80" alt="Latte with intricate leaf pattern poured on the surface" loading="lazy">
+        </figure>
+        <div class="menu-card-body">
+          <h3>Cardamom Latte</h3>
+          <p>Espresso, steamed milk, fresh-ground green cardamom. Cosy in a cup.</p>
+          <span class="price">Rs 460</span>
+        </div>
+      </article>
+
+      <article class="menu-card reveal reveal-d1">
+        <figure class="menu-card-fig">
+          <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=300&q=80" alt="Tall glass of cold brew tonic with ice and orange peel garnish" loading="lazy">
+        </figure>
+        <div class="menu-card-body">
+          <span class="menu-card-badge">★ Summer</span>
+          <h3>Cold Brew Tonic</h3>
+          <p>18-hour cold brew over tonic and orange peel. Bright and fizzy.</p>
+          <span class="price">Rs 480</span>
+        </div>
+      </article>
+
+      <article class="menu-card reveal reveal-d2">
+        <figure class="menu-card-fig">
+          <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=300&q=80" alt="Freshly baked pistachio croissant on a plate" loading="lazy">
+        </figure>
+        <div class="menu-card-body">
+          <h3>Pistachio Croissant</h3>
+          <p>Laminated for two days, filled with pistachio cream. Out by noon.</p>
+          <span class="price">Rs 350</span>
+        </div>
+      </article>
+
+      <article class="menu-card reveal reveal-d3">
+        <figure class="menu-card-fig">
+          <img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=300&q=80" alt="Slice of banana walnut loaf cake on a plate" loading="lazy">
+        </figure>
+        <div class="menu-card-body">
+          <h3>Banana Walnut Loaf</h3>
+          <p>Baked each morning, served warm with brown butter.</p>
+          <span class="price">Rs 290</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="section alt2" aria-label="Gallery">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-label reveal">The little things</div>
+      <h2 class="section-title reveal reveal-d1">A look around</h2>
+    </div>
+
+    <div class="gallery-grid">
+      <figure class="reveal reveal-d1">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80" alt="Morning cortado with leaf latte art on a marble countertop" loading="lazy">
+      </figure>
+      <figure class="reveal reveal-d2">
+        <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=600&q=80" alt="Cosy coffee shop seating area with wooden chairs and warm lighting" loading="lazy">
+      </figure>
+      <figure class="reveal reveal-d2">
+        <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=600&q=80" alt="Black coffee cup on a rustic wooden table" loading="lazy">
+      </figure>
+      <figure class="reveal reveal-d3">
+        <img src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?auto=format&fit=crop&w=600&q=80" alt="Fresh pastries displayed on the coffee shop counter" loading="lazy">
+      </figure>
+      <figure class="reveal reveal-d3">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80" alt="Warm-toned coffee shop interior from behind the counter" loading="lazy">
+      </figure>
+    </div>
+
+    <p class="gallery-label reveal">The morning cortado · A seat by the window · Slow afternoons · Out of the oven</p>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section reveal" aria-label="Customer review">
+  <div class="container">
+    <blockquote>
+      <span class="quote-icon">&ldquo;</span>
+      <p>The kind of place where one cup turns into three and nobody minds.</p>
+      <div class="stars">★★★★★</div>
+      <div class="attribution">— Hira N., regular since the first week</div>
+    </blockquote>
+  </div>
+</section>
+
+<!-- VISIT -->
+<section id="visit" class="section alt" aria-label="Visit us">
+  <div class="container">
+    <div class="section-header center">
+      <h2 class="section-title reveal">Come sit a while</h2>
+      <p class="section-subtitle reveal reveal-d1">Lane 4, Old Town Square — we'll save you a seat by the window.</p>
+    </div>
+
+    <div class="visit-grid">
+      <div class="visit-card reveal reveal-d1">
+        <span class="icon">🕖</span>
+        <h3>Hours</h3>
+        <div class="value">7:00 am – 8:00 pm</div>
+        <div class="sub">Every day of the week</div>
+      </div>
+
+      <div class="visit-card reveal reveal-d2">
+        <span class="icon">📍</span>
+        <h3>Find us</h3>
+        <div class="value"><a href="https://maps.google.com/?q=Old+Town+Square" target="_blank" rel="noopener">Old Town Square, Lane 4</a></div>
+        <div class="sub">A short walk from the market</div>
+      </div>
+
+      <div class="visit-card reveal reveal-d3">
+        <span class="icon">📞</span>
+        <h3>Call ahead</h3>
+        <div class="value"><a href="tel:+923182781890">+92 318 2781890</a></div>
+        <div class="sub">For table reservations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" aria-label="Order via WhatsApp">
+  <div class="container">
+    <h2 class="reveal">Skip the queue</h2>
+    <p class="reveal reveal-d1">Message us your order and we'll have it ready on the counter.</p>
+    <a href="https://wa.me/923182781890" class="btn btn-primary reveal reveal-d2" target="_blank" rel="noopener">Order on WhatsApp →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>Crema</h3>
+        <div class="subtitle">Coffee House · Old Town Square, Lane 4</div>
+      </div>
+
+      <div class="footer-links">
+        <a href="#story">Our story</a>
+        <a href="#menu">Menu</a>
+        <a href="#visit">Visit</a>
+        <a href="https://wa.me/923182781890" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Crema Coffee House. All rights reserved.</span>
+      <span>Built from one Markdown spec</span>
+    </div>
+  </div>
+</footer>
+
 <script>
-// ═══════════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════════
+(function() {
+  var h = document.querySelector('.hamburger');
+  var n = document.querySelector('.nav-links');
+  var lastFocus;
+  if (h) {
+    h.addEventListener('click', function() {
+      var open = this.classList.toggle('active');
+      n.classList.toggle('open');
+      this.setAttribute('aria-expanded', open);
+      if (open) {
+        lastFocus = document.activeElement;
+        setTimeout(function() { n.querySelector('a').focus(); }, 100);
+      } else if (lastFocus) {
+        lastFocus.focus();
+      }
+    });
 
-const pages = [
-  { id:'home', label:'Home', icon:'🏠' },
-  { id:'ch1', label:'Welcome to the Zoo', icon:'🐾' },
-  { id:'ch2', label:'What is AI?', icon:'🤖' },
-  { id:'ch3', label:'What is Machine Learning?', icon:'📊' },
-  { id:'ch4', label:'What is Deep Learning?', icon:'🐙' },
-  { id:'ch5', label:'The Complete Family Tree', icon:'🌳' },
-  { id:'ch6', label:'Common Mistakes', icon:'⚠️' },
-  { id:'ref', label:'Quick Reference', icon:'📋' },
-  { id:'flashcards', label:'Flashcards', icon:'🃏' },
-  { id:'quiz', label:'Chapter Quiz', icon:'🧠' },
-  { id:'study', label:'7-Day Study Plan', icon:'📅' },
-  { id:'takeaways', label:'Key Takeaways', icon:'🎯' },
-];
-
-const pageContent = {};
-
-// ─── FLASHCARD DATA ───
-const flashcards = [
-  { front:"AI", back:"Any machine that performs tasks needing human intelligence. The whole zoo." },
-  { front:"Machine Learning", back:"A type of AI where the computer learns patterns from data instead of following fixed rules. Training the animals." },
-  { front:"Deep Learning", back:"A type of ML using neural networks with many layers. The octopus brain." },
-  { front:"Supervised Learning", back:"ML with labeled examples. Like teaching a parrot with an answer key." },
-  { front:"Unsupervised Learning", back:"ML finding patterns in unlabeled data. Like monkeys grouping objects naturally." },
-  { front:"Reinforcement Learning", back:"ML learning through trial and error with rewards. Like training a dolphin with fish treats." },
-  { front:"Is all Deep Learning also Machine Learning?", back:"Yes." },
-  { front:"Is all Machine Learning also Deep Learning?", back:"No." },
-  { front:"Neural Network", back:'A system of connected "neurons" (simple math units) that process information in layers. The octopus\'s arms.' },
-  { front:"Training Data", back:"The examples you give an ML model to learn from. The fruit you show the parrot." },
-  { front:"Overfitting", back:"When a model learns the training data too perfectly, including noise. Like a parrot that only recognizes YOUR apple, not apples in general. (Ch 6)" },
-  { front:"Underfitting", back:"When a model fails to learn the pattern at all. Like a dolphin that never figures out the trick. (Ch 6)" },
-  { front:"Bias in AI", back:"When training data contains human prejudices, the AI learns them too. Garbage in, garbage out. (Ch 6)" },
-  { front:"Rule-Based AI", back:"AI that follows fixed rules without learning. Old chess programs, basic toasters. (Ch 2)" },
-  { front:"Supervised vs Unsupervised", back:"Supervised = labeled data + answer key. Unsupervised = no labels, find patterns yourself. (Ch 3)" },
-  { front:"Reinforcement vs Supervised", back:"Reinforcement = learn from rewards/trial & error. Supervised = learn from correct examples. (Ch 3)" },
-  { front:"Why use Deep Learning?", back:"When data is raw (images, audio, text) and you want the model to discover features automatically. Needs lots of data. (Ch 4)" },
-  { front:"Why NOT use Deep Learning?", back:"For simple problems with small data. Regular ML is faster, cheaper, and works better. (Ch 4)" },
-  { front:"Can AI be conscious?", back:"No. AI is math and pattern matching. No feelings, no awareness, no desires. (Ch 6)" },
-  { front:"What are the 3 types of ML?", back:"Supervised (labeled), Unsupervised (unlabeled), Reinforcement (rewards). (Ch 3)" },
-];
-
-// ─── QUIZ DATA ───
-const quizData = [
-  { q:"Which is the correct relationship?", opts:["ML ⊂ AI ⊂ DL","AI ⊂ ML ⊂ DL","DL ⊂ ML ⊂ AI","AI = ML = DL"], ans:"Deep Learning is a subset of Machine Learning, which is a subset of AI.", correct:2 },
-  { q:"You want a system that recommends movies based on what users watched before. Which type of learning?", opts:["Rule-based AI","Supervised Learning","Unsupervised Learning","Reinforcement Learning"], ans:"Supervised Learning. You have labeled data and you're predicting what they'll watch next.", correct:1 },
-  { q:"True or False: A calculator is AI.", opts:["True","False"], ans:"False. A calculator follows fixed rules. It doesn't learn, adapt, or make decisions.", correct:1 },
-  { q:"Which is an example of Reinforcement Learning?", opts:["Sorting spam","A robot learning to walk by falling","Grouping customers by purchase history","Predicting house prices"], ans:"The robot tries actions, gets feedback, and improves. Trial and error with rewards.", correct:1 },
-  { q:"Key difference between regular ML and Deep Learning?", opts:["DL is faster","DL works with raw data & discovers features itself","DL doesn't need data","No difference"], ans:"Regular ML needs you to pick features. Deep Learning discovers features itself.", correct:1 },
-  { q:"Why is the octopus an analogy for Deep Learning?", opts:["Octopuses are smart","Each arm = a layer detecting different features","Octopuses have eight brains","They learn tricks"], ans:"Each arm detects different info. The brain combines signals. Like layers in a neural network.", correct:1 },
-  { q:"AI that follows fixed rules and does NOT learn is called:", opts:["Deep Learning","Machine Learning","Rule-Based AI","Reinforcement Learning"], ans:"Rule-Based AI. It uses hard-coded rules. No learning involved.", correct:2 },
-  { q:"True or False: AI systems truly understand what they're doing.", opts:["True","False"], ans:"False. AI does not understand anything. It matches patterns.", correct:1 },
-  { q:"Which ML type uses NO labels and finds patterns on its own?", opts:["Supervised","Unsupervised","Reinforcement","Deep Learning"], ans:"Unsupervised Learning. No labels. The algorithm finds structure itself.", correct:1 },
-  { q:"Which approach can build a chess-playing system?", opts:["Rule-based AI","Reinforcement Learning","Supervised Learning","All of the above"], ans:"All three: rule-based (Deep Blue), supervised (learn from past games), reinforcement (self-play).", correct:3 },
-];
-
-// ─── BUILD PAGE CONTENT ───
-
-pageContent.home = `
-  <div class="page homepage">
-    <div class="hero-mini">
-      <div class="badge">📖 Chapter 1</div>
-      <h1>How to Train Your <span>AI</span><br>A Zoo Keeper's Guide</h1>
-      <p>AI, Machine Learning &amp; Deep Learning — explained with zero math and a trip to the zoo.</p>
-      <button class="start-btn" onclick="navigate('ch1')">Start Learning →</button>
-    </div>
-    <div class="stats">
-      <div class="stat-card"><div class="num">6</div><div class="label">Chapters</div></div>
-      <div class="stat-card"><div class="num">20</div><div class="label">Flashcards</div></div>
-      <div class="stat-card"><div class="num">10</div><div class="label">Quiz Questions</div></div>
-      <div class="stat-card"><div class="num">7</div><div class="label">Day Plan</div></div>
-    </div>
-    <div class="what-youll-learn">
-      <h3>What You'll Learn</h3>
-      <ul>
-        <li>✅ What AI, Machine Learning &amp; Deep Learning really mean</li>
-        <li>✅ How they relate to each other (the family tree)</li>
-        <li>✅ 3 types of Machine Learning with real examples</li>
-        <li>✅ Why an octopus is the perfect analogy for Deep Learning</li>
-        <li>✅ 7 common misconceptions — and the truth behind each</li>
-        <li>✅ 20 flashcards, 10 quiz questions, a 7-day study plan</li>
-      </ul>
-    </div>
-  </div>
-`;
-
-pageContent.ch1 = `
-  <div class="page">
-    <span class="ch-tag">Welcome</span>
-    <h2>Welcome to the Zoo</h2>
-    <p>Imagine you're a zoo keeper. Your job is to understand, train, and take care of different animals. Some are simple, some are incredibly smart.</p>
-    <p>Artificial Intelligence is exactly like a zoo. <em>(If animals aren't your thing, swap in "factory floor" — same concepts, different coat of paint.)</em></p>
-    <div class="table-wrap">
-      <table><thead><tr><th>AI Concept</th><th>Zoo Analogy</th></tr></thead><tbody>
-        <tr><td><strong>AI</strong></td><td>The entire zoo — every smart machine</td></tr>
-        <tr><td><strong>Machine Learning</strong></td><td>Training animals to learn behaviors</td></tr>
-        <tr><td><strong>Deep Learning</strong></td><td>The most complex animals (dolphins, octopuses)</td></tr>
-      </tbody></table>
-    </div>
-    <p>The zoo is not one thing. It's many animals, many trainers, many methods. Same with AI.</p>
-  </div>
-`;
-
-pageContent.ch2 = `
-  <div class="page">
-    <span class="ch-tag">Chapter 2</span>
-    <h2>What is AI? <span style="color:var(--gray-500);font-weight:300;">(The Zoo Itself)</span></h2>
-    <div class="card card-green"><p><strong>Definition:</strong> AI is any machine that performs tasks that normally require human intelligence.</p><p><strong>Simple:</strong> If a machine does something a human would use their brain for, that's AI.</p></div>
-    <h3>Examples You Already Use</h3>
-    <ul><li>Your email spam filter = AI</li><li>Google Maps finding the fastest route = AI</li><li>Netflix recommending movies = AI</li><li>Your phone's face unlock = AI</li></ul>
-    <h3>What AI Is NOT</h3>
-    <p>AI is not a robot with feelings. It's not conscious. It's not "alive."</p>
-    <p>A basic toaster is not AI. A calculator is not AI. A traffic light is not AI.</p>
-    <p>They follow fixed rules. They don't adapt. They don't learn.</p>
-    <div class="card card-gold"><strong>The rule:</strong> If it follows the exact same instructions every time with no change, it's probably not AI.</div>
-    <div class="mistake-callout"><div class="quote">"AI means the machine thinks like a human."</div><div class="correction">Wrong.</div><p style="margin-top:6px;">AI mimics <em>results</em>, not thinking. A plane flies, but not like a bird. AI is smart, but not like a person.</p></div>
-  </div>
-`;
-
-pageContent.ch3 = `
-  <div class="page">
-    <span class="ch-tag">Chapter 3</span>
-    <h2>What is Machine Learning? <span style="color:var(--gray-500);font-weight:300;">(Training the Animals)</span></h2>
-    <div class="card card-green"><strong>Definition:</strong> Machine Learning is a type of AI where the computer learns patterns from data instead of following explicit instructions.</div>
-    <h3>The Old Way vs. The ML Way</h3>
-    <p><strong>The old way:</strong> You write a rule for every situation.</p>
-    <pre><code>IF temperature > 100 AND smoke_detected = TRUE → fire alarm</code></pre>
-    <p><strong>The ML way:</strong> You show the computer 10,000 examples of fires and 10,000 examples of not-fires. It figures out the patterns itself.</p>
-    <h3>How ML Works (3 Simple Steps)</h3>
-    <ol><li><strong>Give it data</strong> — photos, numbers, text, whatever</li><li><strong>Let it find patterns</strong> — it tries, fails, adjusts, tries again</li><li><strong>Use it on new data</strong> — it predicts or decides based on what it learned</li></ol>
-    <h3>The Zoo Analogy</h3>
-    <p>You want to teach a parrot to identify fruit.</p>
-    <p><strong>Old way (no ML):</strong> You write a rule: "If red and round → apple." But what about green apples? What about tomatoes? You'd need infinite rules.</p>
-    <p><strong>ML way:</strong> You show the parrot 100 apples and 100 oranges, say the name each time. Eventually, the parrot figures it out by itself.</p>
-    <h3>Types of Machine Learning (3 Training Styles)</h3>
-    <div class="card card-green"><h4>Supervised Learning — "Teaching with an answer key"</h4><p>You show labeled examples: "This is an apple. This is an orange." The animal learns to match.</p><p><em>Real use:</em> Email spam filter.</p></div>
-    <div class="card card-green"><h4>Unsupervised Learning — "Let them explore"</h4><p>You give the animal a pile of objects and let it group them naturally. No labels, no answers.</p><p><em>Real use:</em> Customer segmentation.</p></div>
-    <div class="card card-green"><h4>Reinforcement Learning — "Trial and error with rewards"</h4><p>The animal tries something. Good result → treat. Bad result → no treat.</p><p><em>Real use:</em> AlphaGo defeated Lee Sedol after training using human expert games and reinforcement learning.</p></div>
-    <div class="mistake-callout"><div class="quote">"Machine Learning is magic. It just knows things."</div><div class="correction">Wrong.</div><p style="margin-top:6px;">ML is just math. Pattern matching at scale. It doesn't <em>understand</em> anything.</p></div>
-  </div>
-`;
-
-pageContent.ch4 = `
-  <div class="page">
-    <span class="ch-tag">Chapter 4</span>
-    <h2>What is Deep Learning? <span style="color:var(--gray-500);font-weight:300;">(The Octopus Brain)</span></h2>
-    <div class="card card-green"><strong>Definition:</strong> Deep Learning is a type of Machine Learning that uses "neural networks" with many layers.</div>
-    <p><strong>Simple:</strong> Regular ML is a simple animal. Deep Learning is an octopus.</p>
-    <h3>Why an Octopus?</h3>
-    <p>An octopus has: a central brain, eight arms each with its own mini-brain. Each arm detects different things. All arms work together.</p>
-    <div class="table-wrap">
-      <table><thead><tr><th>Octopus</th><th>Deep Learning</th></tr></thead><tbody>
-        <tr><td>Arm 1 detects edges</td><td>Layer 1 detects edges in an image</td></tr>
-        <tr><td>Arm 2 detects texture</td><td>Layer 2 detects shapes</td></tr>
-        <tr><td>Arm 3 detects movement</td><td>Layer 3 detects objects</td></tr>
-        <tr><td>Central brain combines it all</td><td>Final layer makes the decision</td></tr>
-      </tbody></table>
-    </div>
-    <h3>How Deep Learning is Different from Regular ML</h3>
-    <div class="table-wrap">
-      <table><thead><tr><th>Regular ML</th><th>Deep Learning</th></tr></thead><tbody>
-        <tr><td>Needs structured data</td><td>Can handle raw data (pixels, audio, text)</td></tr>
-        <tr><td>You must pick features</td><td>It discovers features itself</td></tr>
-        <tr><td>Works with small data</td><td>Needs massive amounts of data</td></tr>
-        <tr><td>Runs on a normal computer</td><td>Needs powerful GPUs</td></tr>
-        <tr><td>Example: Predicting house prices</td><td>Example: Recognizing faces</td></tr>
-      </tbody></table>
-    </div>
-    <h3>Real-World Deep Learning</h3>
-    <div class="card"><p><strong>ChatGPT</strong> — Trained on billions of sentences. Learned patterns of language.</p></div>
-    <div class="card"><p><strong>Face ID</strong> — Layers detect: edges → nose shape → eye distance → complete face.</p></div>
-    <div class="card"><p><strong>Self-driving cars</strong> — Multiple models work together: lanes, pedestrians, signs, braking.</p></div>
-    <h3>Quiz Yourself</h3>
-    <div class="inline-q"><p><strong>Q:</strong> Is ALL deep learning also machine learning?</p><p class="answer">A: Yes. Deep learning is a <em>subset</em> of machine learning.</p></div>
-    <div class="inline-q"><p><strong>Q:</strong> Is ALL machine learning also deep learning?</p><p class="answer">A: No. Many ML methods are not deep learning.</p></div>
-    <div class="mistake-callout"><div class="quote">"Deep learning is the best, so we should always use it."</div><div class="correction">Wrong.</div><p style="margin-top:6px;">Deep learning is overkill for simple problems. Use the simplest tool that works.</p></div>
-  </div>
-`;
-
-pageContent.ch5 = `
-  <div class="page">
-    <span class="ch-tag">Chapter 5</span>
-    <h2>The Complete Family Tree</h2>
-    <div class="tree">AI (every smart machine)
-├── Rule-Based AI (fixed rules, no learning)
-│   └── Example: Chess program from the 1980s
-│
-├── Machine Learning (learns from data)
-│   ├── Supervised Learning (labeled examples)
-│   │   ├── Decision Trees
-│   │   ├── Support Vector Machines
-│   │   └── Random Forests
-│   │
-│   ├── Unsupervised Learning (finds hidden patterns)
-│   │   └── K-Means Clustering
-│   │
-│   ├── Reinforcement Learning (trial and error)
-│   │   └── Q-Learning
-│   │
-│   └── Deep Learning (neural networks, many layers)
-│       ├── Convolutional Neural Networks (images)
-│       ├── Recurrent Neural Networks (sequences, text)
-│       └── Transformers (ChatGPT, BERT)
-│
-└── Other AI (robotics, planning, expert systems)</div>
-    <h3>The Three Key Relationships</h3>
-    <ol>
-      <li><strong>All DL is ML.</strong> Everything deep learning is a type of machine learning.</li>
-      <li><strong>All ML is AI.</strong> Every machine learning system is considered artificial intelligence.</li>
-      <li><strong>Not all AI is ML.</strong> A simple chess program is AI but does not learn.</li>
-    </ol>
-  </div>
-`;
-
-pageContent.ch6 = `
-  <div class="page">
-    <span class="ch-tag">Chapter 6</span>
-    <h2>Common Mistakes <span style="color:var(--gray-500);font-weight:300;">(The Complete List)</span></h2>
-    <div class="mistake-list">
-      <div class="mistake-item"><h4>"AI will become conscious and take over."</h4><p class="truth">Truth: AI has no desires, no goals, no awareness. It's math.</p></div>
-      <div class="mistake-item"><h4>"More data always means better results."</h4><p class="truth">Truth: Bad data = bad results. Garbage in, garbage out.</p></div>
-      <div class="mistake-item"><h4>"The AI knows what it's doing."</h4><p class="truth">Truth: An image classifier doesn't know what a dog is. It matches pixel patterns.</p></div>
-      <div class="mistake-item"><h4>"AI is brand new."</h4><p class="truth">Truth: The term "AI" was coined in 1956. Neural networks were invented in the 1940s.</p></div>
-      <div class="mistake-item"><h4>"I need to be a math genius to understand AI."</h4><p class="truth">Truth: You need basic algebra to understand concepts. This book? Zero math.</p></div>
-      <div class="mistake-item"><h4>"Deep Learning and Machine Learning are the same thing."</h4><p class="truth">Truth: DL is ONE type of ML. Like how a car is one type of vehicle.</p></div>
-      <div class="mistake-item"><h4>"If AI explains its decision, it's telling the truth."</h4><p class="truth">Truth: Explainable AI gives a best guess. The model doesn't actually know.</p></div>
-    </div>
-  </div>
-`;
-
-pageContent.ref = `
-  <div class="page">
-    <span class="ch-tag">Reference</span>
-    <h2>Quick Reference Card</h2>
-    <p style="text-align:center;color:var(--gray-500);">Print this. Stick it on your wall. Refer to it whenever you're confused.</p>
-    <div class="table-wrap">
-      <table><thead><tr><th>Concept</th><th>One-Liner</th><th>Ch</th></tr></thead><tbody>
-        <tr><td><strong>AI</strong></td><td>Any machine doing human-like smart tasks</td><td>2</td></tr>
-        <tr><td><strong>Rule-Based AI</strong></td><td>Follows fixed rules, never learns</td><td>2</td></tr>
-        <tr><td><strong>Machine Learning</strong></td><td>Learns patterns from data instead of rules</td><td>3</td></tr>
-        <tr><td><strong>Supervised Learning</strong></td><td>Learning with labeled examples (answer key)</td><td>3</td></tr>
-        <tr><td><strong>Unsupervised Learning</strong></td><td>Learning without labels (exploration)</td><td>3</td></tr>
-        <tr><td><strong>Reinforcement Learning</strong></td><td>Learning by trial and error (rewards)</td><td>3</td></tr>
-        <tr><td><strong>Deep Learning</strong></td><td>ML with brain-like neural networks (many layers)</td><td>4</td></tr>
-        <tr><td><strong>Neural Network</strong></td><td>Connected math units that process info in layers</td><td>4</td></tr>
-        <tr><td><strong>Training Data</strong></td><td>Examples you give a model to learn from</td><td>3</td></tr>
-        <tr><td><strong>Overfitting</strong></td><td>Model memorizes instead of learns</td><td>6</td></tr>
-        <tr><td><strong>Garbage In, Garbage Out</strong></td><td>Bad data = bad results</td><td>6</td></tr>
-      </tbody></table>
-    </div>
-    <div class="card card-gold" style="text-align:center;"><strong>The golden rule:</strong> DL ⊂ ML ⊂ AI. Deep learning is one type of ML. ML is one type of AI.</div>
-  </div>
-`;
-
-pageContent.flashcards = `
-  <div class="page">
-    <span class="ch-tag">Study Tools</span>
-    <h2>Flashcards</h2>
-    <p style="text-align:center;color:var(--gray-500);">Tap a card to flip it.</p>
-    <div class="flashcard-grid" id="flashcardContainer"></div>
-  </div>
-`;
-
-pageContent.quiz = `
-  <div class="page">
-    <span class="ch-tag">Test Yourself</span>
-    <h2>Chapter Quiz</h2>
-    <p style="text-align:center;color:var(--gray-500);margin-bottom:20px;">Click an option to select it, then click "Check Answer" to see if you're right.</p>
-    <div id="quizContainer"></div>
-  </div>
-`;
-
-pageContent.study = `
-  <div class="page">
-    <span class="ch-tag">Your Week</span>
-    <h2>7-Day Study Plan</h2>
-    <div class="study-grid" id="studyGrid"></div>
-    <div class="bonus">
-      <h4>🎉 Bonus (If You're Excited)</h4>
-      <p>After Day 7, spend 15 minutes on <strong>Google Teachable Machine</strong> — train a simple ML model with your webcam, no code needed.</p>
-    </div>
-  </div>
-`;
-
-pageContent.takeaways = `
-  <div class="page">
-    <div class="takeaways" style="background:linear-gradient(135deg,var(--green-900),var(--green-700));color:var(--white);border-radius:var(--radius);padding:32px 36px;margin:20px 0;">
-      <h2 style="color:var(--gold);font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:800;margin-bottom:16px;">Key Takeaways</h2>
-      <ol style="list-style:none;counter-reset:t;padding:0;">
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">1</span> <strong>AI</strong> = machines doing smart things</li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">2</span> <strong>ML</strong> = machines learning from examples</li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">3</span> <strong>DL</strong> = complex ML with brain-like layers</li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">4</span> <strong>DL ⊂ ML ⊂ AI</strong> (remember the nesting dolls)</li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">5</span> <strong>AI doesn't understand anything</strong> — it matches patterns</li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">6</span> <strong>More data ≠ better data</strong> — garbage in, garbage out</li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">7</span> <strong>Use the simplest tool that works</strong></li>
-        <li style="counter-increment:t;padding:8px 0 8px 36px;font-size:0.95rem;position:relative;"><span style="position:absolute;left:0;top:8px;width:26px;height:26px;line-height:26px;text-align:center;background:var(--gold);color:var(--green-900);font-weight:800;border-radius:50%;font-size:0.75rem;">8</span> <strong>You can understand AI without math</strong> — concepts first</li>
-      </ol>
-    </div>
-  </div>
-`;
-
-// ═══════════════════════════════════════════════════════════
-// APP STATE
-// ═══════════════════════════════════════════════════════════
-
-let currentPage = 'home';
-
-// ═══════════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════════
-
-function navigate(pageId) {
-  currentPage = pageId;
-  const content = document.getElementById('content');
-  const html = pageContent[pageId];
-  if (!html) return;
-
-  content.innerHTML = html;
-
-  // Update active nav link
-  document.querySelectorAll('.sidebar-nav a').forEach(a => {
-    a.classList.toggle('active', a.dataset.page === pageId);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && n.classList.contains('open')) {
+        h.classList.remove('active');
+        n.classList.remove('open');
+        h.setAttribute('aria-expanded', 'false');
+        h.focus();
+      }
+    });
+  }
+  n.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      h.classList.remove('active');
+      n.classList.remove('open');
+      if (h) h.setAttribute('aria-expanded', 'false');
+    });
   });
 
-  // Update breadcrumb
-  const page = pages.find(p => p.id === pageId);
-  document.getElementById('breadcrumb').innerHTML = `${page.icon} <span>${page.label}</span>`;
+  var sections = document.querySelectorAll('section[id]');
+  var anchors = document.querySelectorAll('.nav-links a:not([target])');
+  function setActive() {
+    var y = window.scrollY + 130;
+    var id = '';
+    sections.forEach(function(s) {
+      if (s.offsetTop <= y && s.offsetTop + s.offsetHeight > y) id = s.getAttribute('id');
+    });
+    anchors.forEach(function(a) {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + id) a.classList.add('active');
+    });
+  }
+  window.addEventListener('scroll', setActive, { passive: true });
+  window.addEventListener('load', setActive);
 
-  // Update progress
-  const idx = pages.findIndex(p => p.id === pageId);
-  document.getElementById('progress').textContent = `${idx} / ${pages.length - 1}`;
+  var els = document.querySelectorAll('.reveal:not(.visible), .reveal-left:not(.visible), .reveal-right:not(.visible)');
+  if ('IntersectionObserver' in window) {
+    var ob = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function(el) { ob.observe(el); });
+  } else {
+    els.forEach(function(el) { el.classList.add('visible'); });
+  }
 
-  // Render interactive widgets
-  if (pageId === 'flashcards') renderFlashcards();
-    if (pageId === 'quiz') { renderQuiz(); }
-  if (pageId === 'study') renderStudyPlan();
-
-  // Close sidebar on mobile
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('show');
-
-  // Scroll to top
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ─── NEXT / PREV NAV ───
-function getPrevPage(pageId) {
-  const idx = pages.findIndex(p => p.id === pageId);
-  return idx > 0 ? pages[idx - 1].id : null;
-}
-function getNextPage(pageId) {
-  const idx = pages.findIndex(p => p.id === pageId);
-  return idx < pages.length - 1 ? pages[idx + 1].id : null;
-}
-
-function navPrev() {
-  const prev = getPrevPage(currentPage);
-  if (prev) navigate(prev);
-}
-function navNext() {
-  const next = getNextPage(currentPage);
-  if (next) navigate(next);
-}
-
-// ─── RENDER PAGES WITH NAV ───
-const origRender = {};
-
-function wrapWithNav(html, pageId) {
-  const prev = getPrevPage(pageId);
-  const next = getNextPage(pageId);
-  return html + `
-    <div class="nav-buttons">
-      ${prev ? `<button class="nav-btn prev" onclick="navPrev()"><span class="arrow">←</span> ${pages.find(p=>p.id===prev).label}</button>` : '<div></div>'}
-      ${next ? `<button class="nav-btn next" onclick="navNext()">${pages.find(p=>p.id===next).label} <span class="arrow">→</span></button>` : '<div></div>'}
-    </div>
-  `;
-}
-
-// Override navigate to wrap content
-const _origNavigate = navigate;
-navigate = function(pageId) {
-  currentPage = pageId;
-  const content = document.getElementById('content');
-  let raw = pageContent[pageId];
-  if (!raw) return;
-
-  // Don't wrap home in nav buttons
-  const wrapped = pageId === 'home' ? raw : wrapWithNav(raw, pageId);
-  content.innerHTML = wrapped;
-
-  document.querySelectorAll('.sidebar-nav a').forEach(a => {
-    a.classList.toggle('active', a.dataset.page === pageId);
+  var cards = document.querySelectorAll('.menu-card, .visit-card');
+  cards.forEach(function(c) {
+    c.addEventListener('mouseenter', function() {
+      this.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+    });
   });
-  const page = pages.find(p => p.id === pageId);
-  document.getElementById('breadcrumb').innerHTML = `${page.icon} <span>${page.label}</span>`;
-  const idx = pages.findIndex(p => p.id === pageId);
-  document.getElementById('progress').textContent = `${idx} / ${pages.length - 1}`;
-
-  if (pageId === 'flashcards') renderFlashcards();
-    if (pageId === 'quiz') { renderQuiz(); }
-  if (pageId === 'study') renderStudyPlan();
-
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-// ═══════════════════════════════════════════════════════════
-// RENDERERS
-// ═══════════════════════════════════════════════════════════
-
-function renderFlashcards() {
-  const container = document.getElementById('flashcardContainer');
-  if (!container) return;
-  container.innerHTML = '';
-  flashcards.forEach(card => {
-    const div = document.createElement('div'); div.className = 'flashcard';
-    div.innerHTML = `
-      <div class="flashcard-inner">
-        <div class="flashcard-front"><strong>${card.front}</strong><span class="tap-hint">tap to flip</span></div>
-        <div class="flashcard-back">${card.back}</div>
-      </div>
-    `;
-    div.addEventListener('click', () => div.classList.toggle('flipped'));
-    container.appendChild(div);
-  });
-}
-
-function renderQuiz() {
-  const container = document.getElementById('quizContainer');
-  if (!container) return;
-  container.innerHTML = '';
-  const labels = ['A','B','C','D'];
-  quizData.forEach((item, i) => {
-    const div = document.createElement('div'); div.className = 'quiz-item';
-    div.innerHTML = `
-      <h4>Question ${i+1}</h4>
-      <p>${item.q}</p>
-      <div class="options" id="q-opts-${i}">
-        ${item.opts.map((opt,j) => `
-          <div class="option-row" data-q="${i}" data-idx="${j}" onclick="selectOption(this)">
-            <div class="box">✓</div>
-            <span class="letter">${labels[j]}.</span>
-            <span class="text">${opt}</span>
-          </div>
-        `).join('')}
-      </div>
-      <button class="quiz-check-btn" id="q-check-${i}" onclick="checkAnswer(${i})" disabled>Check Answer</button>
-      <div class="quiz-feedback" id="q-fb-${i}"></div>
-    `;
-    container.appendChild(div);
-  });
-}
-
-function selectOption(el) {
-  const qIdx = el.dataset.q;
-  const container = el.closest('.options');
-  // Deselect all others in this question
-  container.querySelectorAll('.option-row').forEach(r => r.classList.remove('selected'));
-  el.classList.add('selected');
-  // Enable check button
-  document.getElementById(`q-check-${qIdx}`).disabled = false;
-}
-
-function checkAnswer(qIdx) {
-  const selected = document.querySelector(`#q-opts-${qIdx} .option-row.selected`);
-  if (!selected) return;
-  const chosen = parseInt(selected.dataset.idx);
-  const item = quizData[qIdx];
-  const correct = chosen === item.correct;
-  const fb = document.getElementById(`q-fb-${qIdx}`);
-  const btn = document.getElementById(`q-check-${qIdx}`);
-
-  // Mark all rows
-  document.querySelectorAll(`#q-opts-${qIdx} .option-row`).forEach((r, idx) => {
-    if (idx === item.correct) r.classList.add('correct');
-    else if (idx === chosen && !correct) r.classList.add('wrong');
-  });
-
-  fb.className = `quiz-feedback show ${correct ? 'correct' : 'wrong'}`;
-  fb.innerHTML = correct
-    ? `<strong>✓ Correct!</strong> ${item.ans}`
-    : `<strong>✗ Not quite.</strong> ${item.ans}`;
-  btn.disabled = true;
-  btn.textContent = 'Answered ✓';
-}
-
-function renderStudyPlan() {
-  const grid = document.getElementById('studyGrid');
-  if (!grid) return;
-  const plan = [
-    { day:"Day 1", topic:"What is AI?", time:"20 min", act:"Read Ch 2. Find 3 AIs you use daily.", chk:"Name 3 examples of AI in under 30 seconds." },
-    { day:"Day 2", topic:"Machine Learning", time:"30 min", act:"Read Ch 3. Write down the 3 types of ML.", chk:"Recite the 3 types + give one real example of each." },
-    { day:"Day 3", topic:"Deep Learning", time:"30 min", act:"Read Ch 4. Draw the octopus analogy.", chk:'Explain: "Deep learning is different from regular ML because..."' },
-    { day:"Day 4", topic:"Family Tree", time:"20 min", act:"Read Ch 5. Draw the tree from memory.", chk:"Draw DL ⊂ ML ⊂ AI blind, with examples." },
-    { day:"Day 5", topic:"Common Mistakes", time:"15 min", act:"Read Ch 6. Pick your top 3 mistakes.", chk:"Find a real article making each mistake. Spot errors!" },
-    { day:"Day 6", topic:"Review + Flashcards", time:"25 min", act:'Sort 20 flashcards into piles.', chk:"18/20 correct without hesitation." },
-    { day:"Day 7", topic:"Quiz + Self-Test", time:"25 min", act:"Take Quiz. Re-read wrong answers.", chk:"Cover Quick Reference. Recite all 11 concepts. Pass = 9/11." },
-  ];
-  grid.innerHTML = plan.map(p => `
-    <div class="study-day">
-      <div class="day-label">${p.day}</div>
-      <h4>${p.topic}</h4>
-      <span class="time">${p.time}</span>
-      <p>${p.act}</p>
-      <div class="checkpoint"><strong>Checkpoint:</strong> ${p.chk}</div>
-    </div>
-  `).join('');
-}
-
-// ═══════════════════════════════════════════════════════════
-// SIDEBAR / MOBILE
-// ═══════════════════════════════════════════════════════════
-
-document.getElementById('sidebarToggle').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarOverlay').classList.toggle('show');
-});
-document.getElementById('sidebarOverlay').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('show');
-});
-
-// Sidebar nav clicks
-document.querySelectorAll('.sidebar-nav a').forEach(a => {
-  a.addEventListener('click', () => navigate(a.dataset.page));
-});
-
-// ─── KEYBOARD SHORTCUTS ───
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight') { navNext(); e.preventDefault(); }
-  if (e.key === 'ArrowLeft') { navPrev(); e.preventDefault(); }
-});
-
-// ═══════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════
-
-navigate('home');
+})();
 </script>
+
 </body>
 </html>
