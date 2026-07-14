@@ -1162,6 +1162,184 @@ ul { list-style: none; }
 @media (min-width: 769px) {
   .nav-links { display: flex !important; opacity: 1 !important; transform: none !important; position: static !important; background: none !important; border: none !important; padding: 0 !important; box-shadow: none !important; pointer-events: auto !important; }
 }
+
+/* ---- WhatsApp Float ---- */
+.wa-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+}
+
+.wa-float-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #25D366;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(37,211,102,0.35);
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+}
+
+.wa-float-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 32px rgba(37,211,102,0.45);
+}
+
+.wa-float-btn svg { width: 32px; height: 32px; fill: #fff; }
+
+.wa-float-btn .pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid #25D366;
+  animation: waPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes waPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+.wa-chat-box {
+  position: absolute;
+  bottom: 76px;
+  right: 0;
+  width: 340px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.95);
+  transition: all 0.35s var(--ease-out);
+}
+
+.wa-chat-box.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.wa-chat-header {
+  background: #075E54;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wa-chat-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wa-chat-avatar svg { width: 24px; height: 24px; fill: #fff; }
+
+.wa-chat-header-info h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1px;
+}
+
+.wa-chat-header-info span {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.wa-chat-body {
+  padding: 20px;
+  background: #ECE5DD;
+  min-height: 100px;
+}
+
+.wa-chat-bubble {
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 0 12px 12px 12px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #303030;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.wa-chat-bubble::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 0;
+  height: 0;
+  border-top: 0px solid transparent;
+  border-right: 8px solid #fff;
+  border-bottom: 8px solid transparent;
+}
+
+.wa-chat-time {
+  font-size: 0.65rem;
+  color: #999;
+  text-align: right;
+  margin-top: 6px;
+}
+
+.wa-chat-footer {
+  padding: 14px 20px;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wa-chat-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #333;
+  outline: none;
+}
+
+.wa-chat-send {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #25D366;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s var(--ease-out);
+  flex-shrink: 0;
+}
+
+.wa-chat-send:hover { background: #1ebe57; transform: scale(1.05); }
+.wa-chat-send svg { width: 20px; height: 20px; fill: #fff; }
+
+@media (max-width: 480px) {
+  .wa-chat-box { width: calc(100vw - 32px); right: -8px; bottom: 72px; }
+  .wa-float { bottom: 20px; right: 20px; }
+}
 </style>
 </head>
 <body>
@@ -1180,7 +1358,7 @@ ul { list-style: none; }
       <li role="none"><a href="#story" role="menuitem">Our story</a></li>
       <li role="none"><a href="#menu" role="menuitem">Menu</a></li>
       <li role="none"><a href="#visit" role="menuitem">Visit</a></li>
-      <li role="none"><a href="https://wa.me/923182781890" role="menuitem" class="nav-order" target="_blank" rel="noopener">Order on WhatsApp</a></li>
+      <li role="none"><a href="#" role="menuitem" class="nav-order">Order on WhatsApp</a></li>
     </ul>
   </div>
 </nav>
@@ -1201,7 +1379,7 @@ ul { list-style: none; }
 
       <div class="hero-actions reveal visible reveal-d3">
         <a href="#menu" class="btn btn-primary" style="background:var(--white);color:var(--brown-900);">View the menu</a>
-        <a href="https://wa.me/923182781890" class="btn btn-outline-light" target="_blank" rel="noopener">Order on WhatsApp</a>
+        <a href="#" class="btn btn-outline-light">Order on WhatsApp</a>
       </div>
 
       <div class="hero-stats reveal visible reveal-d4">
@@ -1404,7 +1582,7 @@ ul { list-style: none; }
       <div class="visit-card reveal reveal-d3">
         <span class="icon">📞</span>
         <h3>Call ahead</h3>
-        <div class="value"><a href="tel:+923182781890">+92 318 2781890</a></div>
+        <div class="value">Available upon request</div>
         <div class="sub">For table reservations</div>
       </div>
     </div>
@@ -1416,7 +1594,7 @@ ul { list-style: none; }
   <div class="container">
     <h2 class="reveal">Skip the queue</h2>
     <p class="reveal reveal-d1">Message us your order and we'll have it ready on the counter.</p>
-    <a href="https://wa.me/923182781890" class="btn btn-primary reveal reveal-d2" target="_blank" rel="noopener">Order on WhatsApp →</a>
+    <a href="#" class="btn btn-primary reveal reveal-d2">Order on WhatsApp →</a>
   </div>
 </section>
 
@@ -1433,7 +1611,7 @@ ul { list-style: none; }
         <a href="#story">Our story</a>
         <a href="#menu">Menu</a>
         <a href="#visit">Visit</a>
-        <a href="https://wa.me/923182781890" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="#">WhatsApp</a>
       </div>
     </div>
 
@@ -1443,6 +1621,37 @@ ul { list-style: none; }
     </div>
   </div>
 </footer>
+
+<!-- WhatsApp Float -->
+<div class="wa-float">
+  <div class="wa-chat-box" id="waChatBox">
+    <div class="wa-chat-header">
+      <div class="wa-chat-avatar">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.34 5L2 22l5.16-1.34C8.47 21.51 10.18 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.66 0-3.21-.48-4.53-1.3L5.5 19.5l.8-2.03C5.69 16.21 5 14.17 5 12c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/><path d="M16.5 14.5c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.09 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+      </div>
+      <div class="wa-chat-header-info">
+        <h4>Crema Coffee House</h4>
+        <span>Typically replies within minutes</span>
+      </div>
+    </div>
+    <div class="wa-chat-body">
+      <div class="wa-chat-bubble">
+        Hi there! Welcome to Crema. How can we help you today?
+      </div>
+      <div class="wa-chat-time">Just now</div>
+    </div>
+    <div class="wa-chat-footer">
+      <input type="text" class="wa-chat-input" id="waChatInput" placeholder="Type a message...">
+      <button class="wa-chat-send" id="waChatSend" aria-label="Send message">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+  <button class="wa-float-btn" id="waFloatBtn" aria-label="Chat on WhatsApp">
+    <span class="pulse-ring"></span>
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.34 5L2 22l5.16-1.34C8.47 21.51 10.18 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.66 0-3.21-.48-4.53-1.3L5.5 19.5l.8-2.03C5.69 16.21 5 14.17 5 12c0-3.86 3.14-7 7-7s7 3.14 7 7-3.14 7-7 7z"/><path d="M16.5 14.5c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.09 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+  </button>
+</div>
 
 <script>
 (function() {
@@ -1513,6 +1722,42 @@ ul { list-style: none; }
       this.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
     });
   });
+
+  var waBtn = document.getElementById('waFloatBtn');
+  var waBox = document.getElementById('waChatBox');
+  var waInput = document.getElementById('waChatInput');
+  var waSend = document.getElementById('waChatSend');
+
+  if (waBtn && waBox) {
+    waBtn.addEventListener('click', function() {
+      var isOpen = waBox.classList.toggle('open');
+      if (isOpen) {
+        setTimeout(function() { waInput.focus(); }, 300);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!waBox.contains(e.target) && !waBtn.contains(e.target) && waBox.classList.contains('open')) {
+        waBox.classList.remove('open');
+      }
+    });
+
+    function sendWaMessage() {
+      var msg = waInput.value.trim();
+      if (!msg) msg = 'Hi! I\'d like to order from Crema Coffee House.';
+      var url = 'https://wa.me/?text=' + encodeURIComponent(msg);
+      window.open(url, '_blank');
+      waInput.value = '';
+      waBox.classList.remove('open');
+    }
+
+    if (waSend) waSend.addEventListener('click', sendWaMessage);
+    if (waInput) {
+      waInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendWaMessage();
+      });
+    }
+  }
 })();
 </script>
 
